@@ -1,4 +1,5 @@
 from xml.dom import minidom
+import xml.etree.ElementTree as ET 
 
 class Nodo(object):
     def __init__(self,datos):
@@ -28,7 +29,7 @@ class Lista_Circular(object):
     
     def agregar_ultimo(self,datos):
         nodo=Nodo(datos)
-        if Lista.esta_vacia():
+        if self.esta_vacia():
             self.cabeza = nodo
             nodo.siguiente=self.cabeza
         else:
@@ -42,10 +43,10 @@ class Lista_Circular(object):
         if self.esta_vacia():
             return print("Esta vacia")
         temp=self.cabeza
-        Lista.son_iguales(temp.datos)
+        self.son_iguales(temp.datos)
         while temp.siguiente is not self.cabeza:
             temp=temp.siguiente
-            Lista.son_iguales(temp.datos)
+            self.son_iguales(temp.datos)
             #print(temp.datos)
     
     def eliminar(self, Datos):
@@ -63,35 +64,121 @@ class Lista_Circular(object):
                 temp=temp.siguiente
             temp2.siguiente =temp.siguiente
 
-    
+    def buscar(self,posicion):
+        if self.esta_vacia():
+            return("la lista esta vacia")
+        if posicion==0:
+            return self.cabeza.datos
+        elif posicion >0:
+            temp=self.cabeza
+            for a in range(int(posicion)):
+                temp=temp.siguiente
+            return temp.datos
+
+    def son_iguales(self,Datos):
+        matriz_temp=list()
+        matriz_temp=Datos
+        nueva_matriz=list()
+        valor=False
+        print(matriz_temp)
+        ñ=0
+        a=0
+        #for a in range(int(matriz_temp[2])):
+        while len(matriz_temp[4])>0:
+            coordenadas=list()
+            dato_evaluando=list()
+            print(len(matriz_temp[4]))
+            temp_list=list() 
+            valor=True
+            for b in range(int(matriz_temp[1])):
+               
+                try:
+                    dato_evaluando=matriz_temp[4][a]
+                    if matriz_temp[4][a]==matriz_temp[4][b]:
+                        coordenadas.append(b)
+                        valor=False
+                        '''
+                        if valor is False:
+                            coordenadas.append(a)
+                            valor=True
+                        '''
+                except:
+                    pass
+            if valor:
+                coordenadas.append(a)
+            print(f"coordenadas: {coordenadas}")
+            for c in range(int(matriz_temp[2])):
+                total=0
+                for d in range(len(coordenadas)):
+                    total+=int(matriz_temp[3][coordenadas[d]][c])
+                temp_list.append(total)
+                print(f"temp list: {temp_list}")
+            
+            for t in range(len(coordenadas)):
+                try:
+                    print(dato_evaluando)
+                    #matriz_temp[4].remove(Datos[4][coordenadas[t]-ñ])
+                    num=matriz_temp[4].index(dato_evaluando)
+                    matriz_temp[4].pop(num)
+                    matriz_temp[3].pop(num)
+                    #matriz_temp[4].remove(dato_evaluando)
+                    ñ+=1
+                    #print(ñ)
+                    print(matriz_temp[4])   
+                except:
+                    pass
+            
+            valor=False
+            nueva_matriz.append(temp_list)
+            #a+=1
+        print(nueva_matriz)
+
+
+    '''
     def son_iguales(self,Datos):
         nueva_matriz=list()
+        ya=list()
         valor=True
         for a in range(int(Datos[1])):
             temp_list=list()
-            for b in range(int(Datos[2])):
+            temp_list2=list()
+            for b in range(int(Datos[2])): 
                 if Datos[4][a]==Datos[4][b] and not (Datos[3][a]==Datos[3][b]):
                     for c in range(int(Datos[2])):
                         numero1=int(Datos[3][a][c])
                         numero2=int(Datos[3][b][c])
                         total=numero1+numero2
                         temp_list.append(total)
+                        temp_list2.append(Datos[4][a][c])
+                        ya.append(Datos[3][a])
+                        ya.append(Datos[3][b])
                     valor2=True
                     valor=False
-                    for d in nueva_matriz:
+                    for d in ya:
                         if d == temp_list:
                             valor2=False
                     if valor2:
                         nueva_matriz.append(temp_list)
+                        ya.append(temp_list)
                         break
             if valor:
                 nueva_matriz.append(Datos[3][a])
+                ya.append(Datos[3][a])
             valor=True
-
-
-        print(nueva_matriz)
-
-       
+        m=0
+        n=0
+        for i in nueva_matriz:
+            m+=1
+            n=0
+            for j in i:
+                n+=1
+        nueva_matriz2=list()        
+        nueva_matriz2.append(nueva_matriz)
+        nueva_matriz2.append(n)
+        nueva_matriz2.append(m)
+        print(nueva_matriz2)
+        Nueva.agregar_ultimo(nueva_matriz2)
+       '''
 
 Lista=Lista_Circular()
 Nueva=Lista_Circular()
@@ -111,8 +198,10 @@ class Menu:
            Menu.menu()
         elif op == 2:
             Procesos.procesar()
+            Menu.menu()
         elif op == 3:
-            print("escribir")
+            Procesos.escribir()
+            Menu.menu()
         elif op == 4:
             print("mostrar datos estudiante") 
         elif op == 5:
@@ -164,7 +253,7 @@ class Procesos:
                 x = dato.getAttribute("x")
                 y = dato.getAttribute("y")
                 try: 
-                    Matriz[int(y)-1][int(x)-1]=dato.firstChild.data
+                    Matriz[int(x)-1][int(y)-1]=dato.firstChild.data
                 except:
                     continue
             Matriz2=list()
@@ -195,7 +284,19 @@ class Procesos:
             #print(Matriz2)
             #print(Lista.tamaño())
 
-        
+    @staticmethod
+    def escribir():
+        print("estoy escribiendo")
+        matrices=ET.Element("Matrices")
+        for a in range(int(Nueva.tamaño())):
+            matriz =ET.SubElement(matrices,"Matriz", nombre=f"{Lista.buscar(a)[0]}", n=f"{Nueva.buscar(a)[1]}", m=f"{Nueva.buscar(a)[2]}" ,g="")
+            for b in range(int(Nueva.buscar(a)[2])):
+                for c in range(int(Nueva.buscar(a)[1])):
+                    dato=ET.SubElement(matriz,"dato",x=f"{b}",y=f"{c}").text=Nueva.buscar(a)[0][b][c]
+        arbol = ET.ElementTree(matrices)
+        arbol.write("Prueba.xml")
+        print(arbol)
+
 
     
 
