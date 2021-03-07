@@ -246,7 +246,7 @@ class Lista_Circular(object):
 class Procesos:
     
     @staticmethod
-    def hacer_matriz():
+    def hacer_matriz(n,m):
         Matriz1.crear(n,m)
         Matriz2.crear(n,m)
         Matriz1.recorrer()
@@ -349,7 +349,7 @@ class Procesos:
                     else: 
                         dato.tail="\n\t\t"
         arbol = ET.ElementTree(matrices)
-        arbol.write("Prueba.xml")
+        arbol.write("Salida.xml")
     
     @staticmethod   
     def graficar(posicion):
@@ -364,16 +364,27 @@ matrices->{Lista.buscar(int(posicion))[0]}
             """
         contenido+=x
         x=""
+        c=0
+        abc=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','BB','CC','DD','EE','FF','GG','HH','II','JJ','KK','LL','MM','NN','OO','PP','QQ','RR','SS','TT','UU','VV','WW','XX','YY','ZZ']
+        for a in range(int(Lista.buscar(int(posicion))[1])):
+            for b in range(int(Lista.buscar(int(posicion))[2])):
+                x+=f"""
+                {abc[c]}[label="{Lista.buscar(int(posicion))[3][a][b]}" style="filled" fillcolor="#92E192" shape="box"]
+                """
+                c+=1
+
+        c=0
         for a in range(int(Lista.buscar(int(posicion))[1])):
             for b in range(int(Lista.buscar(int(posicion))[2])):
                 if a==0:
                     x+=f"""
-                    {Lista.buscar(int(posicion))[0]}->{Lista.buscar(int(posicion))[3][a][b]}
+                    {Lista.buscar(int(posicion))[0]}->{abc[c]}
                     """
                 else:
                     x+=f"""
-                    {Lista.buscar(int(posicion))[3][a-1][b]}->{Lista.buscar(int(posicion))[3][a][b]}
+                    {abc[c-int(Lista.buscar(int(posicion))[2])]}->{abc[c]}
                     """
+                c+=1
 
         contenido+=x+"}"
         archivo.write(contenido)
@@ -407,8 +418,12 @@ class Menu:
             input("Enter para continuar")
             Menu.menu()
         elif op == 5:
-            a=input("ingrese la matriz que desea seleccionar")
-            Procesos.graficar(a)
+            try:
+                a=input("ingrese la matriz que desea seleccionar")
+                Procesos.graficar(int(a)-1)    
+            except:
+                print("Error:La matriz es muy grande")
+            
         elif op == 6:
             print("Exit")
         else:
